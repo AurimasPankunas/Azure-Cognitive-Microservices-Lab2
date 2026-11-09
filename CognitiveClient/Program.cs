@@ -1,21 +1,11 @@
 ﻿using Azure;
 using Azure.AI.Vision.ImageAnalysis;
 using DotNetEnv;
-using Microsoft.Extensions.Configuration;
 
-// Nuskaito .env failą. TraversePath() ieško .env aukštyn per katalogus,
-// todėl veikia ir paleidus iš Lab2, ir iš CognitiveClient katalogo.
 Env.TraversePath().Load();
 
-var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddEnvironmentVariables()
-    .Build();
-
-var endpoint = Environment.GetEnvironmentVariable("AZURE_VISION_ENDPOINT")
-    ?? config["Azure:Endpoint"];
-var key = Environment.GetEnvironmentVariable("AZURE_VISION_KEY")
-    ?? config["Azure:Key"];
+var endpoint = Environment.GetEnvironmentVariable("AZURE_VISION_ENDPOINT");
+var key = Environment.GetEnvironmentVariable("AZURE_VISION_KEY");
 
 if (string.IsNullOrWhiteSpace(endpoint) || string.IsNullOrWhiteSpace(key))
 {
