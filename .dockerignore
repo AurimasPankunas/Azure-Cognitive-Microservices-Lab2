@@ -1,0 +1,19 @@
+# Never send local secrets or Git metadata to the Docker build context.
+.git
+.gitignore
+.vs
+.env
+README.md
+
+# Build output is recreated inside the image.
+**/bin
+**/obj
+
+# Local databases and uploaded files must not be baked into images.
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/uploads
+
+# The console client is not part of the microservice images.
+CognitiveClient

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AnalysisHistory.Api/AnalysisHistory.Api.csproj" />
+    <Project Path="src/ImageAnalysis.Api/ImageAnalysis.Api.csproj" />
+    <Project Path="src/Shared.Contracts/Shared.Contracts.csproj" />
+  </Folder>
+  <Project Path="CognitiveClient/CognitiveClient.csproj" />
+</Solution>

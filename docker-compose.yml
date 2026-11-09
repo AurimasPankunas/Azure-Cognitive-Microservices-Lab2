@@ -1,0 +1,66 @@
+name: lab2
+
+services:
+  # Message broker used for asynchronous communication between microservices.
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    ports:
+      - "5672:5672"      # AMQP protocol port
+      - "15672:15672"    # RabbitMQ management UI
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  # Microservice 1: receives images, calls Azure OCR and publishes an event.
+  image-analysis-api:
+    build:
+      context: .
+      dockerfile: src/ImageAnalysis.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Azure__Endpoint: ${AZURE_VISION_ENDPOINT}
+      Azure__Key: ${AZURE_VISION_KEY}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__User: ${RABBITMQ_USER:-guest}
+      RabbitMq__Password: ${RABBITMQ_PASS:-guest}
+    ports:
+      - "8081:8080"
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  # Microservice 2: consumes events, stores history and generates reports.
+  analysis-history-api:
+    build:
+      context: .
+      dockerfile: src/AnalysisHistory.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      RabbitMq__Host: rabbitmq
+      RabbitMq__User: ${RABBITMQ_USER:-guest}
+      RabbitMq__Password: ${RABBITMQ_PASS:-guest}
+      ConnectionStrings__Default: Data Source=/app/data/history.db
+    ports:
+      - "8082:8080"
+    volumes:
+      - history-data:/app/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  rabbitmq-data:
+  uploads:
+  history-data:
