@@ -229,31 +229,8 @@ Duomenis ištrinti kartu su volume:
 docker compose down -v
 ```
 
-### Screenshot sąrašas ataskaitai
-
-- [ ] `docker compose ps` – visi trys konteineriai `Up` / `healthy`.
-- [ ] `POST /api/analysis/upload` Swagger arba curl – grąžintas atpažintas tekstas.
-- [ ] RabbitMQ UI `Queues → analysis-history` – matoma eilė ir pranešimų skaičius.
-- [ ] `GET /api/history/all` – įrašas su žodžių skaičiumi.
-- [ ] `GET /api/history/{id}` – pilnas tekstas ir raktažodžiai.
-- [ ] `GET /api/history/{id}/report` – atsisiųsta `.txt` ataskaita.
-- [ ] Sustabdyto istorijos serviso testas – žinutė laukia eilėje, po paleidimo suvartojama.
-
 ## Saugumas
 
 - `.env` yra **ignoruojamas** `.gitignore` ir į GitHub/GitLab nepatenka.
 - Į repo keliamas tik `.env.example` su placeholderiais.
 - Niekada neįkelk Azure rakto į viešą repo. Jei raktas netyčia pateko į Git istoriją – iš karto jį regeneruok Azure portale.
-
-## Naudingos komandos
-
-```powershell
-# Patikrinti, ar .env tikrai ignoruojamas
-git check-ignore -v .env
-
-# Patikrinti, kokie failai bus įkelti
-git status --short
-
-# Build
-dotnet build
-```
